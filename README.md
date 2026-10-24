@@ -107,6 +107,22 @@ Using pfSense / your router? Add the same host override there.
 - TLS / SSL tab: pick your certificate (`*.itera.ca`), turn on **Force HTTPS**
 - Save
 
+### Don't have a certificate yet?
+In the video I use a wildcard certificate (`*.itera.ca`) I already had. To get your own **free** one from Let's Encrypt in Nginx Proxy Manager:
+
+**Option A: DNS challenge (recommended, no port forwarding)**
+NPM proves you own the domain through your DNS provider's API, so nothing has to be open to the internet, and you can get a wildcard cert that covers every service.
+1. At your DNS provider, create an API token that can **only edit DNS** for your domain
+   (Cloudflare: *My Profile → API Tokens → Create Token → "Edit zone DNS" template → your zone*).
+2. NPM → **Certificates → Add Certificate → Let's Encrypt**
+3. Domain names: `*.example.com` and `example.com`
+4. Turn on **Use a DNS Challenge**, pick your provider, paste the token into the credentials box
+   (Cloudflare: `dns_cloudflare_api_token = YOUR_TOKEN`)
+5. Agree to the terms → Save. After a minute or two the certificate shows up. Pick it in the proxy host's TLS/SSL tab.
+
+**Option B: HTTP challenge (simpler, but needs port forwarding)**
+Let's Encrypt must reach NPM from the internet: forward **port 80** on your router to NPM, and your domain must point to your **public IP**. This exposes NPM to the internet, so for something like a password manager Option A is the better choice.
+
 ## 7. Create your account
 Open `https://vault.itera.ca` → **Create account** → email, name → master password.
 > There is **no way to recover** a lost master password. Write it down somewhere safe.
