@@ -2,6 +2,8 @@
 
 All the commands from the video, in the same order. Copy and paste along with me.
 
+▶️ Video: https://youtu.be/VUgmH43ek1g
+
 Tested on: Debian 12 LXC on Proxmox, Docker 29, Vaultwarden 1.37.
 
 **Change these to match your setup:**
@@ -13,7 +15,8 @@ Tested on: Debian 12 LXC on Proxmox, Docker 29, Vaultwarden 1.37.
 
 ## What you need
 - A Debian or Ubuntu machine, VM or LXC container you can SSH into (1 core / 512 MB RAM is plenty)
-- A reverse proxy with an SSL certificate. Vaultwarden **only works over HTTPS**. I use Nginx Proxy Manager with a wildcard cert (`*.itera.ca`).
+- A domain name (from any registrar), for the certificate
+- A reverse proxy with an SSL certificate. Vaultwarden **only works over HTTPS**. I use Nginx Proxy Manager with a wildcard cert (`*.itera.ca`). No proxy yet? [Install Nginx Proxy Manager](#install-nginx-proxy-manager-if-you-dont-have-one) first (5 minutes).
 - A local DNS server (Pi-hole, pfSense, your router...) to point your domain at the proxy
 
 > Proxmox LXC users: the container needs **nesting** and **keyctl** enabled (Options → Features) for Docker to work.
@@ -99,6 +102,8 @@ docker ps
 Using pfSense / your router? Add the same host override there.
 
 ## 6. Nginx Proxy Manager
+No Nginx Proxy Manager yet? [Install it first](#install-nginx-proxy-manager-if-you-dont-have-one), then come back here.
+
 **Hosts → Proxy Hosts → Add Proxy Host**
 - Domain Names: `vault.itera.ca`
 - Scheme: `http`, Forward Hostname/IP: `10.37.0.40`, Forward Port: `8080`
@@ -192,6 +197,50 @@ mv vw-data vw-data.old
 tar -xzf backups/vw-data-YYYY-MM-DD.tar.gz
 docker compose start vaultwarden
 ```
+
+## 10. Connect the Bitwarden apps (browser extension and phone)
+Vaultwarden works with the official Bitwarden apps.
+1. Install the **Bitwarden** browser extension (Chrome, Edge, Firefox...) or the **Bitwarden** app (Android, iPhone).
+2. On the login screen, open the server selector under the email box (it says **bitwarden.com**) and pick **Self-hosted**.
+3. Server URL: `https://vault.itera.ca` (your domain) → **Save**.
+4. Log in with your email and master password.
+
+> Your phone has to reach your domain. At home your local DNS takes care of that. Away from home `vault.itera.ca`
+> points to a local IP, so you need a VPN back home (WireGuard, Tailscale...). The app keeps a copy of your vault, so
+> you can still read your passwords offline.
+
+---
+
+## Install Nginx Proxy Manager (if you don't have one)
+Any Docker machine on your network works. The same machine as Vaultwarden is fine: Vaultwarden uses port 8080,
+Nginx Proxy Manager uses 80, 81 and 443.
+```bash
+mkdir -p /opt/npm && cd /opt/npm
+nano compose.yaml
+```
+```yaml
+services:
+  npm:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: npm
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "81:81"
+      - "443:443"
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+```
+```bash
+docker compose up -d
+```
+Give it a minute, then open `http://NPM-IP:81`. On the first visit, follow the prompts to set your admin email and
+password. (If you get a login page instead, older versions start with `admin@example.com` / `changeme` and make you
+change them right away.)
+
+Next: get a certificate ([Don't have a certificate yet?](#dont-have-a-certificate-yet)), then do steps 5 and 6 with
+this machine's IP as the Nginx Proxy Manager IP.
 
 ---
 
