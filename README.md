@@ -4,6 +4,8 @@ All the commands from the video, in the same order. Copy and paste along with me
 
 ▶️ Video: https://youtu.be/VUgmH43ek1g
 
+My other videos used here: [Pi-hole setup](https://youtu.be/k9GPXPp1KU0) (step 5, local DNS) · [Nginx Proxy Manager setup](https://youtu.be/U9tIwCmWctc) (step 6, proxy + free certificate)
+
 Tested on: Debian 12 LXC on Proxmox, Docker 29, Vaultwarden 1.37.
 
 **Change these to match your setup:**
@@ -95,6 +97,8 @@ docker ps
 `health: starting` is normal for the first few seconds.
 
 ## 5. Local DNS record (Pi-hole)
+No Pi-hole yet? Full setup video: https://youtu.be/k9GPXPp1KU0
+
 **Settings → Local DNS Records**
 - Domain: `vault.itera.ca`
 - IP: **your Nginx Proxy Manager IP** (`10.37.0.29`), not the Vaultwarden IP
@@ -102,7 +106,7 @@ docker ps
 Using pfSense / your router? Add the same host override there.
 
 ## 6. Nginx Proxy Manager
-No Nginx Proxy Manager yet? [Install it first](#install-nginx-proxy-manager-if-you-dont-have-one), then come back here.
+No Nginx Proxy Manager yet? [Install it first](#install-nginx-proxy-manager-if-you-dont-have-one), then come back here. Full video: https://youtu.be/U9tIwCmWctc
 
 **Hosts → Proxy Hosts → Add Proxy Host**
 - Domain Names: `vault.itera.ca`
