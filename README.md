@@ -16,7 +16,8 @@ Tested on: Debian 12 LXC on Proxmox, Docker 29, Vaultwarden 1.37.
 | `10.37.0.29` | IP of your Nginx Proxy Manager |
 
 ## What you need
-- A Debian or Ubuntu machine, VM or LXC container you can SSH into (1 core / 512 MB RAM is plenty)
+- A Debian or Ubuntu machine, VM or LXC container you can SSH into (64-bit or ARM)
+- 1 CPU core, 512 MB RAM and 8 GB disk
 - A domain name (from any registrar), for the certificate
 - A reverse proxy with an SSL certificate. Vaultwarden **only works over HTTPS**. I use Nginx Proxy Manager with a wildcard cert (`*.itera.ca`). No proxy yet? [Install Nginx Proxy Manager](#install-nginx-proxy-manager-if-you-dont-have-one) first (5 minutes).
 - A local DNS server (Pi-hole, pfSense, your router...) to point your domain at the proxy
